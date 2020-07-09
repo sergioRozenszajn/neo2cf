@@ -8,6 +8,8 @@ In this mta the Managed HTML5 Runtime (saas approuter) is used.
 Pre-requisites:
 1. Zone enabled subaccount
 2. Redirect/Logout URL configuration in IAS administration console
+   Applications/<applicationName>/OpenID Connect Configuration/ Redirect URIs
+   For example: https://saas-approuter-consumer3-saas-approuter.cfapps.sap.hana.ondemand.com/login/callback
 
 IAS Administration Console
 https://aybzbjlhs.accounts400.ondemand.com/admin/
