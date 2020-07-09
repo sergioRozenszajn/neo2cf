@@ -1,0 +1,116 @@
+_schema-version: "3.2"
+ID: neo2cf1
+version: 0.0.1
+modules:
+# ----------------- DESTINATION DEPLOYER ---------------------
+- name: neo2cf1-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: uaa_neo2cf1
+    parameters:
+      service-key:
+        name: uaa_neo2cf1-key
+  - name: neo2cf1_html_repo_host
+    parameters:
+      service-key:
+        name: neo2cf1_html_repo_host-key
+  - name: neo2cf1-destination-service
+    parameters:
+      content-target: true
+  parameters:
+    content:
+      subaccount:
+        destinations:
+        # ----------------- HTML5 Repo Destination -----------
+        - Name: neo2cf_neo2cf1_html_repo_host
+          ServiceInstanceName: neo2cf1-html5-app-host-service
+          ServiceKeyName: neo2cf1_html_repo_host-key
+          sap.cloud.service: neo2cf
+        # ----------------- XSUAA Destination ----------------
+        - Authentication: OAuth2UserTokenExchange
+          Name: neo2cf_uaa_neo2cf1
+          ServiceInstanceName: neo2cf1-xsuaa-service
+          ServiceKeyName: uaa_neo2cf1-key
+          sap.cloud.service: neo2cf
+        existing_destinations_policy: update
+  build-parameters:
+    no-source: true
+# ------------------------------------------------------------
+
+# ----------------- HTML5 Applications DEPLOYER --------------
+- name: neo2cf1_ui_deployer
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: neo2cf1_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - app-content.zip
+      name: app
+      target-path: resources/
+- name: app
+  type: html5
+  path: app
+  build-parameters:
+    builder: custom
+    commands:
+    - npm run build
+    supported-platforms: []
+# ------------------------------------------------------------
+
+# ----------------- Service Instances ------------------------
+resources:
+- name: neo2cf1-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: destination
+    service-name: neo2cf1-destination-service
+    service-plan: lite
+    config:
+       init_data: 
+        subaccount : 
+            existing_destinations_policy: update
+            destinations :
+                # ----------------- Backend Destination ---------------------
+                - Name: neo2cf_neo2cf1_backend
+                  URL: 'https://neo2cf-approuter.cfapps.sap.hana.ondemand.com'
+                  HTML5.ForwardIASToken: true  
+                  Type: HTTP
+                  Authentication: NoAuthentication 
+                  ProxyType: Internet
+                # ----------------- IAS Destination -------------------------
+                - Name: neo2cf_IAS
+                  URL: 'https://dummy'
+                  Type: HTTP
+                  Authentication: NoAuthentication 
+                  ProxyType: Internet  
+                  IAS: true
+                  client_id: ab9e3fe9-af1b-4640-8f9f-620553ea7227
+                  client_secret: 418zY9A:kOd0x0ttdD.6-l1Q.DmklH=jY
+                  token_url: https://aybzbjlhs.accounts400.ondemand.com   
+- name: neo2cf1_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: neo2cf1-html5-app-host-service
+    service-plan: app-host
+- name: uaa_neo2cf1
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: neo2cf1-xsuaa-service
+    service-plan: application
+# ------------------------------------------------------------
+
+# ----------------- Build Commands ---------------------------
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm install
+# ------------------------------------------------------------

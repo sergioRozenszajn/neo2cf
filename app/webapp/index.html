@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv='Content-Type' content='text/html;charset=UTF-8' />
+    <title>Neo2CF demo </title>
+    <script src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
+            id="sap-ui-bootstrap" data-sap-ui-libs="sap.m"
+            data-sap-ui-theme="sap_bluecrystal">
+    </script>
+    <script>
+        function sendToBackend(backend){
+            jQuery.sap.require("sap.m.MessageBox");
+            jQuery.ajax({
+                type: "GET",
+                contentType: "text/plain",
+                url: backend,
+                success: function(data, textStatus, jqXHR) {
+                    sap.m.MessageBox.show(data, { title: "Success" });
+                },
+                error:  function(oError) {
+                    sap.m.MessageBox.show(oError.responseText, { title: "Error"});
+                }
+            });
+        }
+    
+        var textTile = new sap.m.GenericTile("CFbe");
+        textTile.setHeader("Cloud Foundry Backend");
+        textTile.setSubheader("Get data from Cloud Foundry");
+        tileContent = new sap.m.TileContent();
+        tileContent.setContent(new sap.ui.core.Icon({
+            src: "sap-icon://process",
+            color: sap.ui.core.IconColor.Default,
+            size: "4em"
+        }));
+        textTile.addTileContent(tileContent);
+        textTile.attachPress(function(){
+            sendToBackend('backend/hello');
+        });
+        textTile.placeAt("uiArea");
+
+        var textTile = new sap.m.GenericTile("logout");
+        textTile.setHeader("Logout");
+        textTile.setSubheader("Logout");
+        tileContent = new sap.m.TileContent();
+        tileContent.setContent(new sap.ui.core.Icon({
+            src: "sap-icon://log",
+            color: sap.ui.core.IconColor.Default,
+            size: "4em"
+        }));
+        textTile.addTileContent(tileContent);
+        textTile.attachPress(function(){
+            window.location.replace('do/logout');
+        });
+        textTile.placeAt("uiArea");
+    </script>
+</head>
+<body class="sapUiBody">
+<div id="uiArea"></div>
+</body>
+</html>
