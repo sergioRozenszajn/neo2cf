@@ -90,7 +90,7 @@ resources:
                   ProxyType: Internet  
                   IAS: true
                   client_id: ab9e3fe9-af1b-4640-8f9f-620553ea7227
-                  client_secret: 418zY9A:kOd0x0ttdD.6-l1Q.DmklH=jY
+                  client_secret: xxxx
                   token_url: https://aybzbjlhs.accounts400.ondemand.com   
 - name: neo2cf1_html_repo_host
   type: org.cloudfoundry.managed-service
