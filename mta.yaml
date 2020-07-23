@@ -32,6 +32,13 @@ modules:
           ServiceInstanceName: neo2cf1-xsuaa-service
           ServiceKeyName: uaa_neo2cf1-key
           sap.cloud.service: neo2cf
+        # ----------------- Workaround for backend destination -----------
+        - Name: neo2cf_neo2cf1_backend
+          ServiceInstanceName: neo2cf1-html5-app-host-service
+          ServiceKeyName: neo2cf1_html_repo_host-key
+          myURL: 'https://neo2cf-backend.cfapps.sap.hana.ondemand.com'
+          HTML5.ForwardIasToken: true
+
         existing_destinations_policy: update
   build-parameters:
     no-source: true
@@ -82,16 +89,6 @@ resources:
                   Type: HTTP
                   Authentication: NoAuthentication 
                   ProxyType: Internet
-                # ----------------- IAS Destination -------------------------
-                - Name: neo2cf_IAS
-                  URL: 'https://dummy'
-                  Type: HTTP
-                  Authentication: NoAuthentication 
-                  ProxyType: Internet  
-                  IAS: true
-                  client_id: ab9e3fe9-af1b-4640-8f9f-620553ea7227
-                  client_secret: xxxx
-                  token_url: https://aybzbjlhs.accounts400.ondemand.com   
 - name: neo2cf1_html_repo_host
   type: org.cloudfoundry.managed-service
   parameters:
